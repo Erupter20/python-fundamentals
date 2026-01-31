@@ -1,0 +1,1 @@
+# 04. Write a program that asks the user to enter 5 numbers and stores them in a list. Print the list in Accending order.
