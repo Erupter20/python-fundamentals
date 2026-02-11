@@ -16,4 +16,5 @@ list = [num1, num2,num3,num4, num5,num6,num7,num8,num9,num10]
 
 toFind = int(input("Enter a number to find:\n"))
 
-print("f{toFind} in list'")
+list.index(toFind)
+print(toFind)

@@ -10,6 +10,7 @@ list = [num1, num2,num3, num4, num5]
 
 toRemove = int(input("enter the number to remove"))
 
-list.remove(f"toRemove")
+# list.remove(f"toRemove") 
 
+list.remove(toRemove)
 print(list)
