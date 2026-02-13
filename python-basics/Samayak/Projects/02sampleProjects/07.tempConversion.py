@@ -2,12 +2,12 @@
 
 temp = int(input("Enter temp :\n"))
 scale = input("enter scale(C/F):\n")
-scale = scale.upper
+scale = scale.upper()
 
 if scale == "C":
     converted_temp = (temp * 9/5) + 32
-    print(f"{f} degrees Fahrenheit")
+    print(f"{converted_temp} degrees Fahrenheit")
 elif scale == "F":
     converted_temp = (temp - 32) * 5/9
-    print(f"{c} degrees celcius")
+    print(f"{converted_temp} degrees celcius")
 print(converted_temp)

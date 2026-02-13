@@ -2,12 +2,12 @@
 
 #userName = input("Enter your name:\n")
 
-set = {}
+my = set()
 n1 = int(input("Enter first number :\n"))
-set['n1'] = n1
+my.add(n1)
 n2 = int(input("Enter second number :\n"))
-set['n2'] = n2
+my.add(n2)
 n3 = int(input("Enter third number :\n"))
-set['n3'] = n3
+my.add(n3)
 # set.add(f"userName")
 print(set)

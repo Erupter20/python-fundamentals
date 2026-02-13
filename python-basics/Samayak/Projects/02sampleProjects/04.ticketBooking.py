@@ -1,6 +1,6 @@
 # Write a program for a movie ticket system where ticket price changes based on age and time.
 
-import time 
+import time #datetime
 
 age = int(input("Enter your age :\n"))
 time = time.time()

@@ -3,3 +3,5 @@
 s = "  Homeless Teletubby ,  jk  haha"
 
 s.find("  ")
+s.replace("  ", "")
+print(s)
