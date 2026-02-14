@@ -4,4 +4,4 @@
 L1 = ['vikash', 'sohan', 'sachin', 'suresh']
 
 for names in L1:
-    print(names)
+    print(names)# use startswith()
