@@ -8,3 +8,9 @@ Chapter 06 - 9,10
 Chapter 07 - 10
 chapter 08 - 07, 09, 10
 projects - 04, 07
+chapter 08 - 07, 09
+projects: 
+conditionals - 04, 07
+loops - 01(no input),, 04(not working at line 33) 05(Can't unpack non-iterable int object)
+what is enumerate?
+functions - how to use list in a function
