@@ -1,6 +1,6 @@
-# 6Find minimu: write a fuction and find the minimum of 2 number.
+# 6Find minimum: write a fuction and find the minimum of 2 number.
 
-def min_of_2(a,b):
+def min_of_2(a,b): #since min() is already is pre-defined function in python
     return min(a,b)
 
 n1 = int(input("Enter first number:\n"))
