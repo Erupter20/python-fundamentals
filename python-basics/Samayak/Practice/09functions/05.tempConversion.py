@@ -8,6 +8,4 @@ def tempConversion(a, scale):
         converted_temp = (a - 32) * 5/9
         return converted_temp
     return converted_temp
-
-print(tempConversion(-40, "C"))
-
+print(tempConversion(40, "C"))
