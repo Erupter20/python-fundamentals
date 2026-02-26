@@ -14,4 +14,9 @@ conditionals - 04, 07
 loops - 01(no input),, 04(not working at line 33) 05(Can't unpack non-iterable int object)
 what is enumerate?
 functions - how to use list in a function
+fileHandling - 05, 08 
 projects - 03, global keyword
+projects - 02, file handling
+Modules - 04, leading 0 gives an error
+
+whats .venv, __pycache_? 
