@@ -18,5 +18,6 @@ fileHandling - 05, 08
 projects - 03, global keyword
 projects - 02, file handling
 Modules - 04, leading 0 gives an error
+OOPS - 02,03, 05, 06
 
 whats .venv, __pycache_? 

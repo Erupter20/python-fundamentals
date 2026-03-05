@@ -1,0 +1,7 @@
+python3 -u "/home/harsh/Practice/python-basics/Samayak/Projects/gta-tracker/business_manager.py.py" , 1000000
+agency: 3000000
+hanger: 3200000
+hanger: 3200000
+hangefr: 3400000
+agency: 2800000
+kosatka:1800000
