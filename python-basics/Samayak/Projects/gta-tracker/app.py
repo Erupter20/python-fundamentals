@@ -139,7 +139,7 @@ def player_dashboard(player):
 
     remaining = max(goal - total, 0)
 
-    progress = total / goal if goal else 0
+    progress = min(total / goal, 1) if goal else 0
 
     col1, col2 = st.columns(2)
 

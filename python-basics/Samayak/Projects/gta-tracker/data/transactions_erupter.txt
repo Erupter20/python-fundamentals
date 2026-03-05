@@ -1,9 +1,9 @@
-Nightclub|Downtown Vinewood|5406050
-Bunker|Paleto Forest|3183500
-Agency|Agency|3805000
-Cocaine Lockup|Alamo Sea|975000
-Meth Lab|Grand Senora Desert|2341500
-Counterfeit Cash|Grand Senora Desert|845000
-Weed Farm|San Chianski Mountain Range|715000
-Document Forgery|Grapeseed|650000
-Terrorbyte|Vehicle|1375000
+Nightclub:5406050
+Bunker:3183500
+Agency:3805000
+Cocaine Lockup:975000
+Meth Lab:2341500
+Counterfeit Cash:845000
+Weed Farm:715000
+Document Forgery:650000
+Terrorbyte:1375000
