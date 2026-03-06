@@ -190,28 +190,13 @@ def player_dashboard(player):
         labels = [p[0].replace("_", " ") for p in properties]
         values = [p[1] for p in properties]
 
-        fig, ax = plt.subplots(figsize=(4, 4))
+        fig, ax = plt.subplots(figsize=(4,4))   # smaller chart
 
-        wedges, texts, autotexts = ax.pie(
-            values,
-            autopct="%1.1f%%",
-            startangle=90
-        )
+        ax.pie(values, autopct="%1.1f%%", startangle=90)
 
         ax.axis("equal")
 
-        ax.legend(
-            wedges,
-            labels,
-            title="Properties",
-            loc="lower center",
-            bbox_to_anchor=(0.5, -0.3),
-            ncol=2
-        )
-
-        plt.tight_layout()
-
-        st.pyplot(fig)
+        st.pyplot(fig, use_container_width=False)
 
     else:
         st.info("No properties yet")
