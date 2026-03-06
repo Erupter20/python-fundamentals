@@ -1,7 +1,6 @@
-# CASH
+
 Cash:1047176
 
-# PROPERTIES
 Kosatka:2200000
 Agency_Hawick:2830000
 CEO_Office_MazeBankWest:1000000
@@ -16,7 +15,6 @@ Weed_Farm_SanChianski:715000
 Document_Forgery_Grapeseed:650000
 Terrorbyte:1375000
 
-# VEHICLES
 Grotti_Turismo_R:500000
 Karin_Kuruma_Armored:698250
 Imponte_Duke_ODeath:665000
@@ -35,8 +33,7 @@ BMX:800
 Blista_Compact:42000
 Declasse_Stallion_Topless:71000
 
-# GARAGES
-# GARAGES
+
 Exceptionalist_Way:1
 San_Vitas_St_Apt2:1
 Del_Perro_Heights_Apt20:1
@@ -44,13 +41,11 @@ Grapeseed_Ave_Garage:1
 Nightclub_Garage:1
 Agency_Garage:1
 
-# EXPENSES
 Bunker_Supplies:75000
 
-# ACTIVITIES
 Agency_Contract_Completed:1
 
-# BUSINESS_ACTIONS
+
 Cocaine_Lockup_Resupplied:1
 Document_Forgery_Resupplied:1
 Bunker_Resupplied:1
