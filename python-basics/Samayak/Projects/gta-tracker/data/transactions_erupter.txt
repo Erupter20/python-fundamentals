@@ -36,20 +36,21 @@ Blista_Compact:42000
 Declasse_Stallion_Topless:71000
 
 # GARAGES
-Exceptionalist_Way
-San_Vitas_St_Apt2
-Del_Perro_Heights_Apt20
-Grapeseed_Ave_Garage
-Nightclub_Garage
-Agency_Garage
+# GARAGES
+Exceptionalist_Way:1
+San_Vitas_St_Apt2:1
+Del_Perro_Heights_Apt20:1
+Grapeseed_Ave_Garage:1
+Nightclub_Garage:1
+Agency_Garage:1
 
 # EXPENSES
 Bunker_Supplies:75000
 
 # ACTIVITIES
-Agency_Contract_Completed
+Agency_Contract_Completed:1
 
 # BUSINESS_ACTIONS
-Cocaine_Lockup:Resupplied
-Document_Forgery:Resupplied
-Bunker:Resupplied
+Cocaine_Lockup_Resupplied:1
+Document_Forgery_Resupplied:1
+Bunker_Resupplied:1
