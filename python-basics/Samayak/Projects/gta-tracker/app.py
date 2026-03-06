@@ -178,20 +178,40 @@ def player_dashboard(player):
     # SPENDING PIE CHART
     # -------------------
 
+    # -------------------
+# SPENDING PIE CHART
+# -------------------
+
     st.divider()
     st.markdown("### Spending Distribution")
 
     if properties:
 
-        labels = [p[0] for p in properties]
+        labels = [p[0].replace("_", " ") for p in properties]
         values = [p[1] for p in properties]
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(6, 6))
 
-        ax.pie(values, labels=labels, autopct="%1.1f%%")
+        wedges, texts, autotexts = ax.pie(
+            values,
+            autopct="%1.1f%%",
+            startangle=90
+        )
+
+        ax.legend(
+            wedges,
+            labels,
+            title="Properties",
+            loc="center left",
+            bbox_to_anchor=(1, 0.5)
+        )
+
+        ax.axis("equal")
 
         st.pyplot(fig)
 
+    else:
+        st.info("No properties yet")
 
 # ---------------------------
 # PLAYER TABS
