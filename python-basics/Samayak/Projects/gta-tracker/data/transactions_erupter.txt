@@ -1,9 +1,55 @@
-Nightclub:5406050
-Bunker:3183500
-Agency:3805000
-Cocaine Lockup:975000
-Meth Lab:2341500
-Counterfeit Cash:845000
-Weed Farm:715000
-Document Forgery:650000
+# CASH
+Cash:1047176
+
+# PROPERTIES
+Kosatka:2200000
+Agency_Hawick:2830000
+CEO_Office_MazeBankWest:1000000
+Nightclub_DowntownVinewood:1670000
+Hangar_FortZancudo_A2:3250000
+Bunker_PaletoForest:1165000
+MC_Clubhouse_GreatChaparral:200000
+Cocaine_Lockup_AlamoSea:975000
+Meth_Lab_GrandSenora:910000
+Counterfeit_Cash_Factory:845000
+Weed_Farm_SanChianski:715000
+Document_Forgery_Grapeseed:650000
 Terrorbyte:1375000
+
+# VEHICLES
+Grotti_Turismo_R:500000
+Karin_Kuruma_Armored:698250
+Imponte_Duke_ODeath:665000
+Vapid_Dominator_GTT:1220000
+Invetero_Coquette_D1:1500000
+Invetero_Coquette_Classic:665000
+Bravado_Banshee:105000
+Ocelot_Omnis:701000
+Imponte_Dukes:0
+Bravado_Sprunk_Buffalo:96000
+Benefactor_Huntley_S:195000
+Enus_Windsor:845000
+Western_Zombie_Chopper:122000
+Pegassi_Vortex:356000
+BMX:800
+Blista_Compact:42000
+Declasse_Stallion_Topless:71000
+
+# GARAGES
+Exceptionalist_Way
+San_Vitas_St_Apt2
+Del_Perro_Heights_Apt20
+Grapeseed_Ave_Garage
+Nightclub_Garage
+Agency_Garage
+
+# EXPENSES
+Bunker_Supplies:75000
+
+# ACTIVITIES
+Agency_Contract_Completed
+
+# BUSINESS_ACTIONS
+Cocaine_Lockup:Resupplied
+Document_Forgery:Resupplied
+Bunker:Resupplied
