@@ -190,7 +190,7 @@ def player_dashboard(player):
         labels = [p[0].replace("_", " ") for p in properties]
         values = [p[1] for p in properties]
 
-        fig, ax = plt.subplots(figsize=(6, 6))
+        fig, ax = plt.subplots(figsize=(4, 4))
 
         wedges, texts, autotexts = ax.pie(
             values,
@@ -198,15 +198,18 @@ def player_dashboard(player):
             startangle=90
         )
 
+        ax.axis("equal")
+
         ax.legend(
             wedges,
             labels,
             title="Properties",
-            loc="center left",
-            bbox_to_anchor=(1, 0.5)
+            loc="lower center",
+            bbox_to_anchor=(0.5, -0.3),
+            ncol=2
         )
 
-        ax.axis("equal")
+        plt.tight_layout()
 
         st.pyplot(fig)
 
