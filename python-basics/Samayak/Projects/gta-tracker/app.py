@@ -175,11 +175,7 @@ def player_dashboard(player):
         st.info("No properties yet")
 
     # -------------------
-    # SPENDING PIE CHART
-    # -------------------
-
-    # -------------------
-# SPENDING PIE CHART
+# SPENDING DISTRIBUTION
 # -------------------
 
     st.divider()
@@ -190,13 +186,17 @@ def player_dashboard(player):
         labels = [p[0].replace("_", " ") for p in properties]
         values = [p[1] for p in properties]
 
-        fig, ax = plt.subplots(figsize=(4,4))   # smaller chart
+        data = pd.DataFrame({
+            "Property": labels,
+            "Price": values
+        })
 
-        ax.pie(values, autopct="%1.1f%%", startangle=90)
+        data = data.sort_values("Price")
 
-        ax.axis("equal")
-
-        st.pyplot(fig, use_container_width=False)
+        st.bar_chart(
+            data.set_index("Property"),
+            height=400
+        )
 
     else:
         st.info("No properties yet")
