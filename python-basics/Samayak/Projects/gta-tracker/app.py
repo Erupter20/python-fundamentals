@@ -135,9 +135,7 @@ def player_dashboard(player):
             if st.button("Add Upgrade", key=f"upgrade_btn_{player}"):
 
                 with open(f"data/upgrades_{player}.txt", "a") as f:
-                    f.write(
-                        f"{selected_property}:{upgrade}:{upgrade_price}\n"
-                    )
+                    f.write(f"{selected_property}:{upgrade}:{upgrade_price}\n")
 
                 st.success("Upgrade added")
 
@@ -164,7 +162,6 @@ def player_dashboard(player):
     cash = PLAYER_CASH.get(player, 0)
 
     remaining = max(goal - cash, 0)
-
     progress = min(cash / goal, 1) if goal else 0
 
     col1, col2 = st.columns(2)
@@ -187,7 +184,6 @@ def player_dashboard(player):
     if properties:
 
         spent = sum(p[3] for p in properties)
-
         recovered = spent * 0.5
 
         data = pd.DataFrame({
@@ -201,11 +197,11 @@ def player_dashboard(player):
         st.info("No assets yet")
 
     # -------------------
-    # CATEGORY DISTRIBUTION
+    # CATEGORY DISTRIBUTION (PIE)
     # -------------------
 
     st.divider()
-    st.markdown("### Asset Categories")
+    st.markdown("### Asset Distribution")
 
     if properties:
 
@@ -220,12 +216,21 @@ def player_dashboard(player):
 
             category_totals[category] += price
 
-        data = pd.DataFrame({
-            "Category": list(category_totals.keys()),
-            "Value": list(category_totals.values())
-        })
+        labels = list(category_totals.keys())
+        values = list(category_totals.values())
 
-        st.bar_chart(data.set_index("Category"))
+        fig, ax = plt.subplots()
+
+        ax.pie(
+            values,
+            labels=labels,
+            autopct="%1.1f%%",
+            startangle=90
+        )
+
+        ax.axis("equal")
+
+        st.pyplot(fig)
 
     else:
         st.info("No assets yet")
