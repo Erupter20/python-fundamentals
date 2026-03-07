@@ -36,7 +36,7 @@ def player_dashboard(player):
     properties = get_properties(player)
 
     # -------------------
-    # ADD PROPERTY
+    # ADD ASSET
     # -------------------
 
     st.markdown("### Add Asset")
@@ -44,7 +44,6 @@ def player_dashboard(player):
     col1, col2 = st.columns(2)
 
     with col1:
-
         name = st.text_input("Asset Name", key=f"name_{player}")
 
         category = st.selectbox(
@@ -54,7 +53,6 @@ def player_dashboard(player):
         )
 
     with col2:
-
         subcategory = st.text_input(
             "Subcategory (Car, Bunker, Apartment...)",
             key=f"sub_{player}"
@@ -75,7 +73,7 @@ def player_dashboard(player):
             st.rerun()
 
     # -------------------
-    # PROPERTY TABLE
+    # ASSET TABLE
     # -------------------
 
     st.divider()
@@ -202,16 +200,16 @@ def player_dashboard(player):
     else:
         st.info("No assets yet")
 
-   # -------------------
-# CATEGORY DISTRIBUTION
-# -------------------
+    # -------------------
+    # CATEGORY DISTRIBUTION
+    # -------------------
 
-st.divider()
-st.markdown("### Asset Categories")
+    st.divider()
+    st.markdown("### Asset Categories")
 
-if properties:
+    if properties:
 
-    category_totals = {}
+        category_totals = {}
 
         for p in properties:
             category = p[1]
@@ -229,8 +227,9 @@ if properties:
 
         st.bar_chart(data.set_index("Category"))
 
-else:
-    st.info("No assets yet")
+    else:
+        st.info("No assets yet")
+
 
 # ---------------------------
 # PLAYER TABS
