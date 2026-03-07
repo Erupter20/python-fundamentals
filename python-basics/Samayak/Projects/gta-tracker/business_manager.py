@@ -27,7 +27,6 @@ def add_property(player, name, category, subcategory, price):
 # ---------------------------
 # READ PROPERTIES
 # ---------------------------
-
 def get_properties(player):
 
     file = get_player_file(player)
@@ -38,16 +37,25 @@ def get_properties(player):
         with open(file) as f:
             for line in f:
 
+                line = line.strip()
+
+                if not line:
+                    continue
+
                 parts = [p.strip() for p in line.split(":")]
 
+                # only accept correct rows
                 if len(parts) != 4:
                     continue
 
                 name, category, subcategory, price = parts
 
-                properties.append(
-                    (name, category, subcategory, int(price))
-                )
+                try:
+                    price = int(price)
+                except:
+                    continue
+
+                properties.append((name, category, subcategory, price))
 
     except FileNotFoundError:
         pass
