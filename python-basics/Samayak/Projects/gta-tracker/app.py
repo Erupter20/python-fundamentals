@@ -209,9 +209,9 @@ def player_dashboard(player):
 st.divider()
 st.markdown("### Asset Categories")
 
-    if properties:
+if properties:
 
-        category_totals = {}
+    category_totals = {}
 
         for p in properties:
             category = p[1]
@@ -229,8 +229,8 @@ st.markdown("### Asset Categories")
 
         st.bar_chart(data.set_index("Category"))
 
-    else:
-        st.info("No assets yet")
+else:
+    st.info("No assets yet")
 
 # ---------------------------
 # PLAYER TABS
