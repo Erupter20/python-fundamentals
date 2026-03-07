@@ -22,6 +22,13 @@ UPGRADES = {
 
 tabs = st.tabs(players)
 
+# temporary cash values (until we auto-read from file)
+PLAYER_CASH = {
+    "bingchillingsuki": 0,
+    "darthmadansh": 0,
+    "erupter": 1047176
+}
+
 
 def player_dashboard(player):
 
@@ -135,16 +142,16 @@ def player_dashboard(player):
         key=f"goal_{player}"
     )
 
-    total = total_spent(player)
+    cash = PLAYER_CASH.get(player, 0)
 
-    remaining = max(goal - total, 0)
+    remaining = max(goal - cash, 0)
 
-    progress = min(total / goal, 1) if goal else 0
+    progress = min(cash / goal, 1) if goal else 0
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.metric("Current", f"${total:,}")
+        st.metric("Current Cash", f"${cash:,}")
 
     with col2:
         st.metric("Remaining", f"${remaining:,}")
@@ -175,8 +182,8 @@ def player_dashboard(player):
         st.info("No properties yet")
 
     # -------------------
-# SPENDING DISTRIBUTION
-# -------------------
+    # SPENDING DISTRIBUTION
+    # -------------------
 
     st.divider()
     st.markdown("### Spending Distribution")
@@ -200,6 +207,7 @@ def player_dashboard(player):
 
     else:
         st.info("No properties yet")
+
 
 # ---------------------------
 # PLAYER TABS
