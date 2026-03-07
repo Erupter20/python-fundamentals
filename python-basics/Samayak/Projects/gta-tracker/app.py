@@ -22,7 +22,6 @@ UPGRADES = {
 
 tabs = st.tabs(players)
 
-# temporary cash values (until we auto-read from file)
 PLAYER_CASH = {
     "bingchillingsuki": 0,
     "darthmadansh": 0,
@@ -34,18 +33,33 @@ def player_dashboard(player):
 
     st.subheader(f"{player}'s Business")
 
+    properties = get_properties(player)
+
     # -------------------
     # ADD PROPERTY
     # -------------------
 
-    st.markdown("### Add Property")
+    st.markdown("### Add Asset")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        property_name = st.text_input("Property Name", key=f"name_{player}")
+
+        name = st.text_input("Asset Name", key=f"name_{player}")
+
+        category = st.selectbox(
+            "Category",
+            ["Property", "Business", "Vehicle", "Utility"],
+            key=f"cat_{player}"
+        )
 
     with col2:
+
+        subcategory = st.text_input(
+            "Subcategory (Car, Bunker, Apartment...)",
+            key=f"sub_{player}"
+        )
+
         price = st.number_input(
             "Price",
             min_value=0,
@@ -53,21 +67,28 @@ def player_dashboard(player):
             key=f"price_{player}"
         )
 
-    if st.button("Add Property", key=f"btn_{player}"):
+    if st.button("Add Asset", key=f"btn_{player}"):
 
-        if property_name:
-            add_property(player, property_name, price)
-            st.success("Property added")
+        if name:
+            add_property(player, name, category, subcategory, price)
+            st.success("Asset added")
             st.rerun()
 
-    st.divider()
+    # -------------------
+    # PROPERTY TABLE
+    # -------------------
 
-    properties = get_properties(player)
+    st.divider()
 
     if properties:
 
         table_data = [
-            {"Property": p[0], "Price": p[1]}
+            {
+                "Name": p[0],
+                "Category": p[1],
+                "Type": p[2],
+                "Price": p[3]
+            }
             for p in properties
         ]
 
@@ -78,7 +99,7 @@ def player_dashboard(player):
         st.metric("Total Investment", f"${total:,}")
 
     else:
-        st.info("No properties yet")
+        st.info("No assets yet")
 
     # -------------------
     # UPGRADES
@@ -167,9 +188,9 @@ def player_dashboard(player):
 
     if properties:
 
-        spent = sum(p[1] for p in properties)
+        spent = sum(p[3] for p in properties)
 
-        recovered = spent * 0.5  # placeholder
+        recovered = spent * 0.5
 
         data = pd.DataFrame({
             "Category": ["Spent", "Recovered"],
@@ -179,7 +200,7 @@ def player_dashboard(player):
         st.bar_chart(data.set_index("Category"))
 
     else:
-        st.info("No properties yet")
+        st.info("No assets yet")
 
     # -------------------
     # SPENDING DISTRIBUTION
@@ -191,22 +212,22 @@ def player_dashboard(player):
     if properties:
 
         labels = [p[0].replace("_", " ") for p in properties]
-        values = [p[1] for p in properties]
+        values = [p[3] for p in properties]
 
         data = pd.DataFrame({
-            "Property": labels,
+            "Asset": labels,
             "Price": values
         })
 
         data = data.sort_values("Price")
 
         st.bar_chart(
-            data.set_index("Property"),
+            data.set_index("Asset"),
             height=400
         )
 
     else:
-        st.info("No properties yet")
+        st.info("No assets yet")
 
 
 # ---------------------------
