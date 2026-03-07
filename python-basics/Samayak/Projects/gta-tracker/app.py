@@ -158,7 +158,7 @@ def player_dashboard(player):
 
     goal = st.number_input(
         "Goal Amount",
-        value=5000000,
+        value=6000000,
         step=100000,
         key=f"goal_{player}"
     )
