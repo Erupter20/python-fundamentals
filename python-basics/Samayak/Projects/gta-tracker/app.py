@@ -202,33 +202,35 @@ def player_dashboard(player):
     else:
         st.info("No assets yet")
 
-    # -------------------
-    # SPENDING DISTRIBUTION
-    # -------------------
+   # -------------------
+# CATEGORY DISTRIBUTION
+# -------------------
 
-    st.divider()
-    st.markdown("### Spending Distribution")
+st.divider()
+st.markdown("### Asset Categories")
 
     if properties:
 
-        labels = [p[0].replace("_", " ") for p in properties]
-        values = [p[3] for p in properties]
+        category_totals = {}
+
+        for p in properties:
+            category = p[1]
+            price = p[3]
+
+            if category not in category_totals:
+                category_totals[category] = 0
+
+            category_totals[category] += price
 
         data = pd.DataFrame({
-            "Asset": labels,
-            "Price": values
+            "Category": list(category_totals.keys()),
+            "Value": list(category_totals.values())
         })
 
-        data = data.sort_values("Price")
-
-        st.bar_chart(
-            data.set_index("Asset"),
-            height=400
-        )
+        st.bar_chart(data.set_index("Category"))
 
     else:
         st.info("No assets yet")
-
 
 # ---------------------------
 # PLAYER TABS
