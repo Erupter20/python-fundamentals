@@ -31,8 +31,6 @@ tabs = st.tabs(players)
 
 def extract_cash_stats(html):
 
-    def extract_cash_stats(html):
-
     soup = BeautifulSoup(html, "html.parser")
 
     stats = {}
