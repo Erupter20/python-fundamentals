@@ -31,29 +31,32 @@ tabs = st.tabs(players)
 
 def extract_cash_stats(html):
 
+    def extract_cash_stats(html):
+
     soup = BeautifulSoup(html, "html.parser")
 
     stats = {}
 
-    rows = soup.select("#cash tr")
+    rows = soup.find_all("tr")
 
     for row in rows:
 
         cols = row.find_all("td")
 
-        if len(cols) == 2:
+        if len(cols) >= 2:
 
-            name = cols[0].text.strip()
-            value = cols[1].text.strip()
+            name = cols[0].get_text(strip=True)
+            value = cols[1].get_text(strip=True)
 
-            value = value.replace("$", "").replace(",", "").strip()
+            if "$" in value:
 
-            try:
-                value = int(value)
-            except:
-                continue
+                clean = value.replace("$", "").replace(",", "")
 
-            stats[name] = value
+                try:
+                    clean = int(clean)
+                    stats[name] = clean
+                except:
+                    continue
 
     return stats
 
@@ -173,8 +176,10 @@ def player_dashboard(player):
 
             if stats:
 
-                if "Cash" in stats:
-                    update_cash(player, stats["Cash"])
+                for stat_name, value in stats.items():
+
+                    if "cash" in stat_name.lower():
+                        update_cash(player, value)
 
                 st.success("Stats imported and updated")
 
