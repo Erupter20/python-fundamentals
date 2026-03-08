@@ -116,12 +116,13 @@ def update_cash(player, new_cash):
     file = get_player_file(player)
 
     lines = []
+    found = False
 
     try:
         with open(file) as f:
             lines = f.readlines()
     except FileNotFoundError:
-        return
+        pass
 
     with open(file, "w") as f:
 
@@ -131,8 +132,12 @@ def update_cash(player, new_cash):
 
             if len(parts) == 4 and parts[0] == "Cash":
                 f.write(f"Cash:Finance:Cash:{new_cash}\n")
+                found = True
             else:
                 f.write(line)
+
+        if not found:
+            f.write(f"Cash:Finance:Cash:{new_cash}\n")
 
 
 # ---------------------------

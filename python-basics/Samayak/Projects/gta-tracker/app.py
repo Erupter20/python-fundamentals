@@ -38,11 +38,21 @@ def extract_cash_stats(html):
     rows = soup.select("#cash tr")
 
     for row in rows:
+
         cols = row.find_all("td")
 
         if len(cols) == 2:
+
             name = cols[0].text.strip()
             value = cols[1].text.strip()
+
+            value = value.replace("$", "").replace(",", "").strip()
+
+            try:
+                value = int(value)
+            except:
+                continue
+
             stats[name] = value
 
     return stats
@@ -57,10 +67,6 @@ def player_dashboard(player):
     st.subheader(f"{player}'s Business")
 
     properties = get_properties(player)
-
-    # -------------------
-    # ADD ASSET
-    # -------------------
 
     st.markdown("### Add Asset")
 
@@ -95,10 +101,6 @@ def player_dashboard(player):
             st.success("Asset added")
             st.rerun()
 
-    # -------------------
-    # ASSET TABLE
-    # -------------------
-
     st.divider()
 
     if properties:
@@ -121,10 +123,6 @@ def player_dashboard(player):
 
     else:
         st.info("No assets yet")
-
-    # -------------------
-    # UPGRADES
-    # -------------------
 
     st.divider()
     st.markdown("### Upgrades")
@@ -155,25 +153,8 @@ def player_dashboard(player):
             add_upgrade(player, selected_property, upgrade, upgrade_price)
             st.success("Upgrade added")
 
-    # -------------------
-    # IMPORT ROCKSTAR STATS
-    # -------------------
-
     st.divider()
     st.markdown("### Import Rockstar Stats")
-
-    with st.expander("How to get the stats HTML"):
-
-        st.markdown("""
-1. Open GTA Online stats on Rockstar Social Club  
-2. Press **F12**  
-3. Go to **Network**  
-4. Select **Fetch/XHR**  
-5. Reload the page  
-6. Click **StatsAjax**  
-7. Copy **Response**  
-8. Paste it below
-""")
 
     stats_html = st.text_area(
         "Paste Stats HTML",
@@ -192,7 +173,10 @@ def player_dashboard(player):
 
             if stats:
 
-                st.success("Stats extracted")
+                if "Cash" in stats:
+                    update_cash(player, stats["Cash"])
+
+                st.success("Stats imported and updated")
 
                 df = pd.DataFrame(
                     [{"Stat": k, "Value": v} for k, v in stats.items()]
@@ -200,12 +184,10 @@ def player_dashboard(player):
 
                 st.table(df)
 
+                st.rerun()
+
             else:
                 st.error("Could not parse stats")
-
-    # -------------------
-    # GOAL TRACKER
-    # -------------------
 
     st.divider()
     st.markdown("### Goal Tracker")
@@ -232,10 +214,6 @@ def player_dashboard(player):
 
     st.progress(progress)
 
-
-# ---------------------------
-# PLAYER TABS
-# ---------------------------
 
 for i, player in enumerate(players):
     with tabs[i]:
