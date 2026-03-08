@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import json
+
 from business_manager import add_property, get_properties, total_spent
 
 st.set_page_config(page_title="GTA Business Terminal", layout="wide")
@@ -144,6 +146,41 @@ def player_dashboard(player):
 
     else:
         st.warning("Add a property first to unlock upgrades")
+
+    # -------------------
+    # IMPORT ROCKSTAR STATS
+    # -------------------
+
+    st.divider()
+    st.markdown("### Import Rockstar Stats")
+
+    stats_json = st.text_area(
+        "Paste Rockstar Social Club JSON Response",
+        height=200,
+        key=f"json_{player}"
+    )
+
+    if st.button("Import Stats", key=f"import_{player}"):
+
+        if not stats_json.strip():
+            st.warning("Paste the JSON response first")
+        else:
+            try:
+                data = json.loads(stats_json)
+
+                # TEMP: show structure so we can inspect fields
+                st.success("JSON imported successfully")
+                st.write("Parsed Data Preview:")
+                st.write(data)
+
+                # Example: try to read a common field name
+                if "cash" in data:
+                    PLAYER_CASH[player] = int(data["cash"])
+                    st.success("Cash updated from JSON")
+                    st.rerun()
+
+            except Exception as e:
+                st.error(f"Invalid JSON: {e}")
 
     # -------------------
     # GOAL TRACKER
