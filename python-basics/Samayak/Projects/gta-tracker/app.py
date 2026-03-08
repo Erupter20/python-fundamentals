@@ -1,9 +1,16 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import json
+from bs4 import BeautifulSoup
 
-from business_manager import add_property, get_properties, total_spent
+from business_manager import (
+    add_property,
+    get_properties,
+    total_spent,
+    get_cash,
+    update_cash,
+    add_upgrade,
+)
 
 st.set_page_config(page_title="GTA Business Terminal", layout="wide")
 
@@ -15,21 +22,36 @@ players = [
     "erupter"
 ]
 
-UPGRADES = {
-    "Kosatka": ["Sparrow"],
-    "Terrorbyte": ["Oppressor Mk2"],
-    "Nightclub": ["Security Upgrade", "Equipment Upgrade"],
-    "Agency": ["Armory", "Vehicle Workshop"]
-}
-
 tabs = st.tabs(players)
 
-PLAYER_CASH = {
-    "bingchillingsuki": 0,
-    "darthmadansh": 0,
-    "erupter": 1047176
-}
 
+# ---------------------------
+# HTML PARSER
+# ---------------------------
+
+def extract_cash_stats(html):
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    stats = {}
+
+    rows = soup.select("#cash tr")
+
+    for row in rows:
+        cols = row.find_all("td")
+
+        if len(cols) == 2:
+            name = cols[0].text.strip()
+            value = cols[1].text.strip()
+
+            stats[name] = value
+
+    return stats
+
+
+# ---------------------------
+# DASHBOARD
+# ---------------------------
 
 def player_dashboard(player):
 
@@ -56,7 +78,7 @@ def player_dashboard(player):
 
     with col2:
         subcategory = st.text_input(
-            "Subcategory (Car, Bunker, Apartment...)",
+            "Subcategory",
             key=f"sub_{player}"
         )
 
@@ -113,74 +135,71 @@ def player_dashboard(player):
     if property_names:
 
         selected_property = st.selectbox(
-            "Select Property",
+            "Property",
             property_names,
             key=f"prop_{player}"
         )
 
-        available_upgrades = UPGRADES.get(selected_property, [])
+        upgrade = st.text_input(
+            "Upgrade Name",
+            key=f"upgrade_{player}"
+        )
 
-        if available_upgrades:
+        upgrade_price = st.number_input(
+            "Upgrade Price",
+            min_value=0,
+            key=f"upgrade_price_{player}"
+        )
 
-            upgrade = st.selectbox(
-                "Upgrade",
-                available_upgrades,
-                key=f"upgrade_{player}"
-            )
+        if st.button("Add Upgrade", key=f"upgrade_btn_{player}"):
 
-            upgrade_price = st.number_input(
-                "Upgrade Price",
-                min_value=0,
-                key=f"upgrade_price_{player}"
-            )
-
-            if st.button("Add Upgrade", key=f"upgrade_btn_{player}"):
-
-                with open(f"data/upgrades_{player}.txt", "a") as f:
-                    f.write(f"{selected_property}:{upgrade}:{upgrade_price}\n")
-
-                st.success("Upgrade added")
-
-        else:
-            st.info("No upgrades available for this property")
-
-    else:
-        st.warning("Add a property first to unlock upgrades")
+            add_upgrade(player, selected_property, upgrade, upgrade_price)
+            st.success("Upgrade added")
 
     # -------------------
-    # IMPORT ROCKSTAR STATS
+    # IMPORT ROCKSTAR HTML
     # -------------------
 
     st.divider()
     st.markdown("### Import Rockstar Stats")
 
-    stats_json = st.text_area(
-        "Paste Rockstar Social Club JSON Response",
-        height=200,
-        key=f"json_{player}"
+    instructions = """
+Steps:
+
+1. Open GTA Online stats on Rockstar Social Club
+2. Press F12
+3. Open Network tab
+4. Select Fetch/XHR
+5. Reload the page
+6. Click the request called StatsAjax
+7. Copy the Response
+8. Paste it here
+"""
+
+    stats_html = st.text_area(
+        "Paste Rockstar HTML Response",
+        height=250,
+        placeholder=instructions,
+        key=f"stats_{player}"
     )
 
     if st.button("Import Stats", key=f"import_{player}"):
 
-        if not stats_json.strip():
-            st.warning("Paste the JSON response first")
+        if not stats_html.strip():
+            st.warning("Paste the HTML response first")
+
         else:
-            try:
-                data = json.loads(stats_json)
 
-                # TEMP: show structure so we can inspect fields
-                st.success("JSON imported successfully")
-                st.write("Parsed Data Preview:")
-                st.write(data)
+            stats = extract_cash_stats(stats_html)
 
-                # Example: try to read a common field name
-                if "cash" in data:
-                    PLAYER_CASH[player] = int(data["cash"])
-                    st.success("Cash updated from JSON")
-                    st.rerun()
+            if stats:
 
-            except Exception as e:
-                st.error(f"Invalid JSON: {e}")
+                st.success("Stats extracted")
+
+                st.write(stats)
+
+            else:
+                st.error("Could not parse stats")
 
     # -------------------
     # GOAL TRACKER
@@ -196,10 +215,11 @@ def player_dashboard(player):
         key=f"goal_{player}"
     )
 
-    cash = PLAYER_CASH.get(player, 0)
+    cash = get_cash(player)
 
     remaining = max(goal - cash, 0)
-    progress = min(cash / goal, 1) if goal else 0
+
+    progress = min(cash / goal, 1)
 
     col1, col2 = st.columns(2)
 
@@ -210,67 +230,6 @@ def player_dashboard(player):
         st.metric("Remaining", f"${remaining:,}")
 
     st.progress(progress)
-
-    # -------------------
-    # PROFIT ANALYSIS
-    # -------------------
-
-    st.divider()
-    st.markdown("### Profit Analysis")
-
-    if properties:
-
-        spent = sum(p[3] for p in properties)
-        recovered = spent * 0.5
-
-        data = pd.DataFrame({
-            "Category": ["Spent", "Recovered"],
-            "Amount": [spent, recovered]
-        })
-
-        st.bar_chart(data.set_index("Category"))
-
-    else:
-        st.info("No assets yet")
-
-    # -------------------
-    # CATEGORY DISTRIBUTION (PIE)
-    # -------------------
-
-    st.divider()
-    st.markdown("### Asset Distribution")
-
-    if properties:
-
-        category_totals = {}
-
-        for p in properties:
-            category = p[1]
-            price = p[3]
-
-            if category not in category_totals:
-                category_totals[category] = 0
-
-            category_totals[category] += price
-
-        labels = list(category_totals.keys())
-        values = list(category_totals.values())
-
-        fig, ax = plt.subplots()
-
-        ax.pie(
-            values,
-            labels=labels,
-            autopct="%1.1f%%",
-            startangle=90
-        )
-
-        ax.axis("equal")
-
-        st.pyplot(fig)
-
-    else:
-        st.info("No assets yet")
 
 
 # ---------------------------

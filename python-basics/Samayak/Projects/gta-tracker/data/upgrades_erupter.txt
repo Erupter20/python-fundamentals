@@ -1,0 +1,5 @@
+Kosatka:Sparrow:1815000
+Agency Hawick:Armory:720000
+Agency Hawick:Vehicle Workshop:800000
+Nightclub Downtown Vinewood:Equipment Upgrade:1410000
+Nightclub Downtown Vinewood:Security Upgrade:695000

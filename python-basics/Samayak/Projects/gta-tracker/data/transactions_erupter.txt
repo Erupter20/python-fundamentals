@@ -13,35 +13,3 @@ Counterfeit Cash Factory:Business:MC Cash:845000
 San Chianski Weed Farm:Business:MC Weed:715000
 Grapeseed Document Forgery:Business:MC Documents:650000
 Terrorbyte:Utility:Operations Truck:1375000
-
-Grotti Turismo R:Vehicle:Car:500000
-Karin Kuruma Armored:Vehicle:Car:698250
-Imponte Duke O Death:Vehicle:Car:665000
-Vapid Dominator GTT:Vehicle:Car:1220000
-Invetero Coquette D1:Vehicle:Car:1500000
-Invetero Coquette Classic:Vehicle:Car:665000
-Bravado Banshee:Vehicle:Car:105000
-Ocelot Omnis:Vehicle:Car:701000
-Imponte Dukes:Vehicle:Car:0
-Bravado Sprunk Buffalo:Vehicle:Car:96000
-Benefactor Huntley S:Vehicle:SUV:195000
-Enus Windsor:Vehicle:Car:845000
-Western Zombie Chopper:Vehicle:Motorcycle:122000
-Pegassi Vortex:Vehicle:Motorcycle:356000
-BMX:Vehicle:Bicycle:800
-Blista Compact:Vehicle:Car:42000
-Declasse Stallion Topless:Vehicle:Car:71000
-
-Exceptionalist Way Apartment:Property:Apartment:0
-San Vitas St Apt 2:Property:Apartment:0
-Del Perro Heights Apt 20:Property:Apartment:0
-Grapeseed Ave Garage:Property:Garage:0
-Nightclub Garage:Property:Garage:0
-Agency Garage:Property:Garage:0
-
-Bunker Supplies:Log:Supply Purchase:75000
-Agency Contract Completed:Log:Mission:0
-
-Cocaine Lockup Resupplied:Log:Resupply:0
-Document Forgery Resupplied:Log:Resupply:0
-Bunker Resupplied:Log:Resupply:0

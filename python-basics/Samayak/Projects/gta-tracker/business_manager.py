@@ -1,15 +1,22 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 DATA_DIR = os.path.join(BASE_DIR, "data")
 
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
 
+# ---------------------------
+# FILE PATHS
+# ---------------------------
+
 def get_player_file(player):
     return os.path.join(DATA_DIR, f"transactions_{player}.txt")
+
+
+def get_upgrade_file(player):
+    return os.path.join(DATA_DIR, f"upgrades_{player}.txt")
 
 
 # ---------------------------
@@ -27,10 +34,10 @@ def add_property(player, name, category, subcategory, price):
 # ---------------------------
 # READ PROPERTIES
 # ---------------------------
+
 def get_properties(player):
 
     file = get_player_file(player)
-
     properties = []
 
     try:
@@ -42,13 +49,15 @@ def get_properties(player):
                 if not line:
                     continue
 
-                parts = [p.strip() for p in line.split(":")]
+                parts = line.split(":")
 
-                # only accept correct rows
                 if len(parts) != 4:
                     continue
 
                 name, category, subcategory, price = parts
+
+                if name == "Cash":
+                    continue
 
                 try:
                     price = int(price)
@@ -72,3 +81,96 @@ def total_spent(player):
     props = get_properties(player)
 
     return sum(p[3] for p in props)
+
+
+# ---------------------------
+# CASH FUNCTIONS
+# ---------------------------
+
+def get_cash(player):
+
+    file = get_player_file(player)
+
+    try:
+        with open(file) as f:
+            for line in f:
+
+                parts = line.strip().split(":")
+
+                if len(parts) != 4:
+                    continue
+
+                name, _, _, value = parts
+
+                if name == "Cash":
+                    return int(value)
+
+    except FileNotFoundError:
+        pass
+
+    return 0
+
+
+def update_cash(player, new_cash):
+
+    file = get_player_file(player)
+
+    lines = []
+
+    try:
+        with open(file) as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        return
+
+    with open(file, "w") as f:
+
+        for line in lines:
+
+            parts = line.strip().split(":")
+
+            if len(parts) == 4 and parts[0] == "Cash":
+                f.write(f"Cash:Finance:Cash:{new_cash}\n")
+            else:
+                f.write(line)
+
+
+# ---------------------------
+# UPGRADES
+# ---------------------------
+
+def add_upgrade(player, property_name, upgrade, price):
+
+    file = get_upgrade_file(player)
+
+    with open(file, "a") as f:
+        f.write(f"{property_name}:{upgrade}:{price}\n")
+
+
+def get_upgrades(player):
+
+    file = get_upgrade_file(player)
+    upgrades = []
+
+    try:
+        with open(file) as f:
+            for line in f:
+
+                parts = line.strip().split(":")
+
+                if len(parts) != 3:
+                    continue
+
+                prop, upgrade, price = parts
+
+                try:
+                    price = int(price)
+                except:
+                    price = 0
+
+                upgrades.append((prop, upgrade, price))
+
+    except FileNotFoundError:
+        pass
+
+    return upgrades
