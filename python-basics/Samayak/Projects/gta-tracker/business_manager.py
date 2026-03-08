@@ -1,7 +1,5 @@
 import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-from bs4 import BeautifulSoup
+
 
 from business_manager import (
     add_property,
