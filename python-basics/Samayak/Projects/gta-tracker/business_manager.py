@@ -1,176 +1,249 @@
-import os
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+from bs4 import BeautifulSoup
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
+from business_manager import (
+    add_property,
+    get_properties,
+    total_spent,
+    get_cash,
+    update_cash,
+    add_upgrade,
+)
 
-if not os.path.exists(DATA_DIR):
-    os.makedirs(DATA_DIR)
+st.set_page_config(page_title="GTA Business Terminal", layout="wide")
 
+st.title("💼 GTA Business Terminal")
 
-# ---------------------------
-# FILE PATHS
-# ---------------------------
+players = [
+    "bingchillingsuki",
+    "darthmadansh",
+    "erupter"
+]
 
-def get_player_file(player):
-    return os.path.join(DATA_DIR, f"transactions_{player}.txt")
-
-
-def get_upgrade_file(player):
-    return os.path.join(DATA_DIR, f"upgrades_{player}.txt")
-
-
-# ---------------------------
-# ADD PROPERTY
-# ---------------------------
-
-def add_property(player, name, category, subcategory, price):
-
-    file = get_player_file(player)
-
-    with open(file, "a") as f:
-        f.write(f"{name}:{category}:{subcategory}:{price}\n")
+tabs = st.tabs(players)
 
 
 # ---------------------------
-# READ PROPERTIES
+# HTML PARSER
 # ---------------------------
 
-def get_properties(player):
+def extract_cash_stats(html):
 
-    file = get_player_file(player)
-    properties = []
+    soup = BeautifulSoup(html, "html.parser")
 
-    try:
-        with open(file) as f:
-            for line in f:
+    stats = {}
 
-                line = line.strip()
+    rows = soup.select("#cash tr")
 
-                if not line:
-                    continue
+    for row in rows:
+        cols = row.find_all("td")
 
-                parts = line.split(":")
+        if len(cols) == 2:
+            name = cols[0].text.strip()
+            value = cols[1].text.strip()
 
-                if len(parts) != 4:
-                    continue
+            stats[name] = value
 
-                name, category, subcategory, price = parts
-
-                if name == "Cash":
-                    continue
-
-                try:
-                    price = int(price)
-                except:
-                    continue
-
-                properties.append((name, category, subcategory, price))
-
-    except FileNotFoundError:
-        pass
-
-    return properties
+    return stats
 
 
 # ---------------------------
-# TOTAL SPENT
+# DASHBOARD
 # ---------------------------
 
-def total_spent(player):
+def player_dashboard(player):
 
-    props = get_properties(player)
+    st.subheader(f"{player}'s Business")
 
-    return sum(p[3] for p in props)
+    properties = get_properties(player)
+
+    # -------------------
+    # ADD ASSET
+    # -------------------
+
+    st.markdown("### Add Asset")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        name = st.text_input("Asset Name", key=f"name_{player}")
+
+        category = st.selectbox(
+            "Category",
+            ["Property", "Business", "Vehicle", "Utility"],
+            key=f"cat_{player}"
+        )
+
+    with col2:
+        subcategory = st.text_input(
+            "Subcategory",
+            key=f"sub_{player}"
+        )
+
+        price = st.number_input(
+            "Price",
+            min_value=0,
+            step=10000,
+            key=f"price_{player}"
+        )
+
+    if st.button("Add Asset", key=f"btn_{player}"):
+
+        if name:
+            add_property(player, name, category, subcategory, price)
+            st.success("Asset added")
+            st.rerun()
+
+    # -------------------
+    # ASSET TABLE
+    # -------------------
+
+    st.divider()
+
+    if properties:
+
+        table_data = [
+            {
+                "Name": p[0],
+                "Category": p[1],
+                "Type": p[2],
+                "Price": p[3]
+            }
+            for p in properties
+        ]
+
+        st.table(table_data)
+
+        total = total_spent(player)
+
+        st.metric("Total Investment", f"${total:,}")
+
+    else:
+        st.info("No assets yet")
+
+    # -------------------
+    # UPGRADES
+    # -------------------
+
+    st.divider()
+    st.markdown("### Upgrades")
+
+    property_names = [p[0] for p in properties]
+
+    if property_names:
+
+        selected_property = st.selectbox(
+            "Property",
+            property_names,
+            key=f"prop_{player}"
+        )
+
+        upgrade = st.text_input(
+            "Upgrade Name",
+            key=f"upgrade_{player}"
+        )
+
+        upgrade_price = st.number_input(
+            "Upgrade Price",
+            min_value=0,
+            key=f"upgrade_price_{player}"
+        )
+
+        if st.button("Add Upgrade", key=f"upgrade_btn_{player}"):
+
+            add_upgrade(player, selected_property, upgrade, upgrade_price)
+            st.success("Upgrade added")
+
+    # -------------------
+    # IMPORT ROCKSTAR HTML
+    # -------------------
+
+    # -------------------
+# IMPORT ROCKSTAR HTML
+# -------------------
+
+st.divider()
+st.markdown("### Import Rockstar Stats")
+
+with st.expander("How to get the stats HTML"):
+
+    st.markdown("""
+1. Open GTA Online stats on Rockstar Social Club  
+2. Press **F12**  
+3. Go to **Network** tab  
+4. Select **Fetch/XHR**  
+5. Reload the page  
+6. Click **StatsAjax**  
+7. Copy the **Response**  
+8. Paste it below
+""")
+
+stats_html = st.text_area(
+    "Paste Stats HTML",
+    height=120,
+    key=f"stats_{player}"
+)
+
+if st.button("Extract Stats", key=f"import_{player}"):
+
+    if not stats_html.strip():
+        st.warning("Paste the HTML response first")
+
+    else:
+
+        stats = extract_cash_stats(stats_html)
+
+        if stats:
+
+            st.success("Stats extracted")
+
+            df = pd.DataFrame(
+                [{"Stat": k, "Value": v} for k, v in stats.items()]
+            )
+
+            st.table(df)
+
+        else:
+            st.error("Could not parse stats")
+
+            
+    # -------------------
+    # GOAL TRACKER
+    # -------------------
+
+    st.divider()
+    st.markdown("### Goal Tracker")
+
+    goal = st.number_input(
+        "Goal Amount",
+        value=6000000,
+        step=100000,
+        key=f"goal_{player}"
+    )
+
+    cash = get_cash(player)
+
+    remaining = max(goal - cash, 0)
+
+    progress = min(cash / goal, 1)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric("Current Cash", f"${cash:,}")
+
+    with col2:
+        st.metric("Remaining", f"${remaining:,}")
+
+    st.progress(progress)
 
 
 # ---------------------------
-# CASH FUNCTIONS
+# PLAYER TABS
 # ---------------------------
 
-def get_cash(player):
-
-    file = get_player_file(player)
-
-    try:
-        with open(file) as f:
-            for line in f:
-
-                parts = line.strip().split(":")
-
-                if len(parts) != 4:
-                    continue
-
-                name, _, _, value = parts
-
-                if name == "Cash":
-                    return int(value)
-
-    except FileNotFoundError:
-        pass
-
-    return 0
-
-
-def update_cash(player, new_cash):
-
-    file = get_player_file(player)
-
-    lines = []
-
-    try:
-        with open(file) as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        return
-
-    with open(file, "w") as f:
-
-        for line in lines:
-
-            parts = line.strip().split(":")
-
-            if len(parts) == 4 and parts[0] == "Cash":
-                f.write(f"Cash:Finance:Cash:{new_cash}\n")
-            else:
-                f.write(line)
-
-
-# ---------------------------
-# UPGRADES
-# ---------------------------
-
-def add_upgrade(player, property_name, upgrade, price):
-
-    file = get_upgrade_file(player)
-
-    with open(file, "a") as f:
-        f.write(f"{property_name}:{upgrade}:{price}\n")
-
-
-def get_upgrades(player):
-
-    file = get_upgrade_file(player)
-    upgrades = []
-
-    try:
-        with open(file) as f:
-            for line in f:
-
-                parts = line.strip().split(":")
-
-                if len(parts) != 3:
-                    continue
-
-                prop, upgrade, price = parts
-
-                try:
-                    price = int(price)
-                except:
-                    price = 0
-
-                upgrades.append((prop, upgrade, price))
-
-    except FileNotFoundError:
-        pass
-
-    return upgrades
+for i, player in enumerate(players):
+    with tabs[i]:
+        player_dashboard(player)

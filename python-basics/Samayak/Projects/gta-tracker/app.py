@@ -43,7 +43,6 @@ def extract_cash_stats(html):
         if len(cols) == 2:
             name = cols[0].text.strip()
             value = cols[1].text.strip()
-
             stats[name] = value
 
     return stats
@@ -157,58 +156,53 @@ def player_dashboard(player):
             st.success("Upgrade added")
 
     # -------------------
-    # IMPORT ROCKSTAR HTML
+    # IMPORT ROCKSTAR STATS
     # -------------------
 
-    # -------------------
-# IMPORT ROCKSTAR HTML
-# -------------------
+    st.divider()
+    st.markdown("### Import Rockstar Stats")
 
-st.divider()
-st.markdown("### Import Rockstar Stats")
+    with st.expander("How to get the stats HTML"):
 
-with st.expander("How to get the stats HTML"):
-
-    st.markdown("""
+        st.markdown("""
 1. Open GTA Online stats on Rockstar Social Club  
 2. Press **F12**  
-3. Go to **Network** tab  
+3. Go to **Network**  
 4. Select **Fetch/XHR**  
 5. Reload the page  
 6. Click **StatsAjax**  
-7. Copy the **Response**  
+7. Copy **Response**  
 8. Paste it below
 """)
 
-stats_html = st.text_area(
-    "Paste Stats HTML",
-    height=120,
-    key=f"stats_{player}"
-)
+    stats_html = st.text_area(
+        "Paste Stats HTML",
+        height=120,
+        key=f"stats_{player}"
+    )
 
-if st.button("Extract Stats", key=f"import_{player}"):
+    if st.button("Extract Stats", key=f"import_{player}"):
 
-    if not stats_html.strip():
-        st.warning("Paste the HTML response first")
-
-    else:
-
-        stats = extract_cash_stats(stats_html)
-
-        if stats:
-
-            st.success("Stats extracted")
-
-            df = pd.DataFrame(
-                [{"Stat": k, "Value": v} for k, v in stats.items()]
-            )
-
-            st.table(df)
+        if not stats_html.strip():
+            st.warning("Paste the HTML response first")
 
         else:
-            st.error("Could not parse stats")
 
-            
+            stats = extract_cash_stats(stats_html)
+
+            if stats:
+
+                st.success("Stats extracted")
+
+                df = pd.DataFrame(
+                    [{"Stat": k, "Value": v} for k, v in stats.items()]
+                )
+
+                st.table(df)
+
+            else:
+                st.error("Could not parse stats")
+
     # -------------------
     # GOAL TRACKER
     # -------------------
@@ -226,7 +220,6 @@ if st.button("Extract Stats", key=f"import_{player}"):
     cash = get_cash(player)
 
     remaining = max(goal - cash, 0)
-
     progress = min(cash / goal, 1)
 
     col1, col2 = st.columns(2)
