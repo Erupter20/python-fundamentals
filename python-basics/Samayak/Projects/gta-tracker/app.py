@@ -160,47 +160,55 @@ def player_dashboard(player):
     # IMPORT ROCKSTAR HTML
     # -------------------
 
-    st.divider()
-    st.markdown("### Import Rockstar Stats")
+    # -------------------
+# IMPORT ROCKSTAR HTML
+# -------------------
 
-    instructions = """
-Steps:
+st.divider()
+st.markdown("### Import Rockstar Stats")
 
-1. Open GTA Online stats on Rockstar Social Club
-2. Press F12
-3. Open Network tab
-4. Select Fetch/XHR
-5. Reload the page
-6. Click the request called StatsAjax
-7. Copy the Response
-8. Paste it here
-"""
+with st.expander("How to get the stats HTML"):
 
-    stats_html = st.text_area(
-        "Paste Rockstar HTML Response",
-        height=250,
-        placeholder=instructions,
-        key=f"stats_{player}"
-    )
+    st.markdown("""
+1. Open GTA Online stats on Rockstar Social Club  
+2. Press **F12**  
+3. Go to **Network** tab  
+4. Select **Fetch/XHR**  
+5. Reload the page  
+6. Click **StatsAjax**  
+7. Copy the **Response**  
+8. Paste it below
+""")
 
-    if st.button("Import Stats", key=f"import_{player}"):
+stats_html = st.text_area(
+    "Paste Stats HTML",
+    height=120,
+    key=f"stats_{player}"
+)
 
-        if not stats_html.strip():
-            st.warning("Paste the HTML response first")
+if st.button("Extract Stats", key=f"import_{player}"):
+
+    if not stats_html.strip():
+        st.warning("Paste the HTML response first")
+
+    else:
+
+        stats = extract_cash_stats(stats_html)
+
+        if stats:
+
+            st.success("Stats extracted")
+
+            df = pd.DataFrame(
+                [{"Stat": k, "Value": v} for k, v in stats.items()]
+            )
+
+            st.table(df)
 
         else:
+            st.error("Could not parse stats")
 
-            stats = extract_cash_stats(stats_html)
-
-            if stats:
-
-                st.success("Stats extracted")
-
-                st.write(stats)
-
-            else:
-                st.error("Could not parse stats")
-
+            
     # -------------------
     # GOAL TRACKER
     # -------------------
