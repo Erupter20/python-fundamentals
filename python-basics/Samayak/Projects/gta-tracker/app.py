@@ -1,18 +1,27 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-from bs4 import BeautifulSoup
 
-from business_manager import (
-    add_property,
-    get_properties,
-    total_spent,
-    get_cash,
-    update_cash,
+from database import (
+    init_db,
+    add_asset,
+    get_assets,
+    total_assets,
     add_upgrade,
+    get_upgrades,
+    total_upgrades,
+    get_cash,
+    update_cash
 )
 
-st.set_page_config(page_title="GTA Business Terminal", layout="wide")
+from parser import extract_stats
+
+
+init_db()
+
+st.set_page_config(
+    page_title="GTA Business Terminal",
+    layout="wide"
+)
 
 st.title("💼 GTA Business Terminal")
 
@@ -25,148 +34,111 @@ players = [
 tabs = st.tabs(players)
 
 
-# ---------------------------
-# HTML PARSER
-# ---------------------------
+def dashboard(player):
 
-def extract_cash_stats(html):
+    st.subheader(player)
 
-    soup = BeautifulSoup(html, "html.parser")
+    assets = get_assets(player)
 
-    stats = {}
+    col1, col2, col3 = st.columns(3)
 
-    rows = soup.find_all("tr")
+    cash = get_cash(player)
+    asset_total = total_assets(player)
+    upgrade_total = total_upgrades(player)
 
-    for row in rows:
+    net = cash + asset_total + upgrade_total
 
-        cols = row.find_all("td")
+    col1.metric("Cash", f"${cash:,}")
+    col2.metric("Assets", f"${asset_total:,}")
+    col3.metric("Net Worth", f"${net:,}")
 
-        if len(cols) >= 2:
-
-            name = cols[0].get_text(strip=True)
-            value = cols[1].get_text(strip=True)
-
-            if "$" in value:
-
-                clean = value.replace("$", "").replace(",", "")
-
-                try:
-                    clean = int(clean)
-                    stats[name] = clean
-                except:
-                    continue
-
-    return stats
-
-
-# ---------------------------
-# DASHBOARD
-# ---------------------------
-
-def player_dashboard(player):
-
-    st.subheader(f"{player}'s Business")
-
-    properties = get_properties(player)
+    st.divider()
 
     st.markdown("### Add Asset")
 
-    col1, col2 = st.columns(2)
+    name = st.text_input("Asset Name", key=f"name{player}")
+    category = st.selectbox(
+        "Category",
+        ["Property", "Business", "Vehicle", "Utility"],
+        key=f"cat{player}"
+    )
+    sub = st.text_input("Subcategory", key=f"sub{player}")
+    price = st.number_input("Price", step=10000, key=f"price{player}")
 
-    with col1:
-        name = st.text_input("Asset Name", key=f"name_{player}")
-
-        category = st.selectbox(
-            "Category",
-            ["Property", "Business", "Vehicle", "Utility"],
-            key=f"cat_{player}"
-        )
-
-    with col2:
-        subcategory = st.text_input(
-            "Subcategory",
-            key=f"sub_{player}"
-        )
-
-        price = st.number_input(
-            "Price",
-            min_value=0,
-            step=10000,
-            key=f"price_{player}"
-        )
-
-    if st.button("Add Asset", key=f"btn_{player}"):
+    if st.button("Add Asset", key=f"add{player}"):
 
         if name:
-            add_property(player, name, category, subcategory, price)
-            st.success("Asset added")
+            add_asset(player, name, category, sub, price)
             st.rerun()
 
     st.divider()
 
-    if properties:
+    if assets:
 
-        table_data = [
-            {
-                "Name": p[0],
-                "Category": p[1],
-                "Type": p[2],
-                "Price": p[3]
-            }
-            for p in properties
-        ]
+        df = pd.DataFrame(
+            assets,
+            columns=["Name", "Category", "Type", "Price"]
+        )
 
-        st.table(table_data)
-
-        total = total_spent(player)
-
-        st.metric("Total Investment", f"${total:,}")
-
-    else:
-        st.info("No assets yet")
+        st.table(df)
 
     st.divider()
-    st.markdown("### Upgrades")
 
-    property_names = [p[0] for p in properties]
+    st.markdown("### Add Upgrade")
 
-    if property_names:
+    if assets:
 
-        selected_property = st.selectbox(
+        prop = st.selectbox(
             "Property",
-            property_names,
-            key=f"prop_{player}"
+            [a[0] for a in assets],
+            key=f"prop{player}"
         )
 
         upgrade = st.text_input(
-            "Upgrade Name",
-            key=f"upgrade_{player}"
+            "Upgrade",
+            key=f"upgrade{player}"
         )
 
-        upgrade_price = st.number_input(
+        price = st.number_input(
             "Upgrade Price",
-            min_value=0,
-            key=f"upgrade_price_{player}"
+            key=f"upprice{player}"
         )
 
-        if st.button("Add Upgrade", key=f"upgrade_btn_{player}"):
+        if st.button("Add Upgrade", key=f"addUp{player}"):
 
-            add_upgrade(player, selected_property, upgrade, upgrade_price)
-            st.success("Upgrade added")
+            add_upgrade(player, prop, upgrade, price)
+            st.rerun()
 
     st.divider()
+
     st.markdown("### Import Rockstar Stats")
 
-    stats_html = st.text_area(
-        "Paste Stats HTML",
-        height=120,
-        key=f"stats_{player}"
+    html = st.text_area(
+        "Paste Rockstar Stats HTML",
+        height=150,
+        key=f"html{player}"
     )
 
-    if st.button("Extract Stats", key=f"import_{player}"):
+    if st.button("Extract", key=f"extract{player}"):
 
-        if not stats_html.strip():
-            st.warning("Paste the HTML response first")
+        stats = extract_stats(html)
+
+        if stats:
+
+            for k, v in stats.items():
+
+                if "cash" in k.lower():
+                    update_cash(player, v)
+
+            st.success("Stats Imported")
+
+            df = pd.DataFrame(
+                [{"Stat": k, "Value": v} for k, v in stats.items()]
+            )
+
+            st.table(df)
+
+            st.rerun()
 
         else:
 
@@ -216,8 +188,13 @@ def player_dashboard(player):
         st.metric("Remaining", f"${remaining:,}")
 
     st.progress(progress)
+=======
+            st.error("Parser failed")
+>>>>>>> 307efb2 (feat: migrate GTA tracker to SQLite and improve dashboard)
 
 
-for i, player in enumerate(players):
+for i, p in enumerate(players):
+
     with tabs[i]:
-        player_dashboard(player)
+
+        dashboard(p)
