@@ -40,6 +40,7 @@ def dashboard(player):
     st.subheader(player)
 
     assets = get_assets(player)
+    upgrades = get_upgrades(player)   # NEW
 
     col1, col2, col3 = st.columns(3)
 
@@ -90,6 +91,8 @@ def dashboard(player):
     # SHOW ASSETS
     # ------------------------
 
+    st.markdown("### Assets")
+
     if assets:
 
         df = pd.DataFrame(
@@ -137,6 +140,26 @@ def dashboard(player):
 
     else:
         st.info("Add a property first to attach upgrades")
+
+    st.divider()
+
+    # ------------------------
+    # SHOW UPGRADES
+    # ------------------------
+
+    st.markdown("### Upgrades")
+
+    if upgrades:
+
+        df_up = pd.DataFrame(
+            upgrades,
+            columns=["Property", "Upgrade", "Price"]
+        )
+
+        st.table(df_up)
+
+    else:
+        st.info("No upgrades yet")
 
     st.divider()
 
