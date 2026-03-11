@@ -13,8 +13,6 @@ from database import (
     update_cash
 )
 
-from parser import extract_stats
-
 
 # Initialize database
 init_db()
@@ -40,9 +38,7 @@ def dashboard(player):
     st.subheader(player)
 
     assets = get_assets(player)
-    upgrades = get_upgrades(player)   # NEW
-
-    col1, col2, col3 = st.columns(3)
+    upgrades = get_upgrades(player)
 
     cash = get_cash(player)
     asset_total = total_assets(player)
@@ -50,9 +46,37 @@ def dashboard(player):
 
     net = cash + asset_total + upgrade_total
 
+    # ------------------------
+    # METRICS
+    # ------------------------
+
+    col1, col2, col3, col4 = st.columns(4)
+
     col1.metric("Cash", f"${cash:,}")
     col2.metric("Assets", f"${asset_total:,}")
-    col3.metric("Net Worth", f"${net:,}")
+    col3.metric("Upgrades", f"${upgrade_total:,}")
+    col4.metric("Net Worth", f"${net:,}")
+
+    st.divider()
+
+    # ------------------------
+    # UPDATE CASH
+    # ------------------------
+
+    st.markdown("### Update Cash")
+
+    new_cash = st.number_input(
+        "Set Current Cash",
+        value=cash,
+        step=10000,
+        key=f"cash_{player}"
+    )
+
+    if st.button("Update Cash", key=f"update_cash_{player}"):
+
+        update_cash(player, new_cash)
+        st.success("Cash updated")
+        st.rerun()
 
     st.divider()
 
@@ -164,44 +188,6 @@ def dashboard(player):
     st.divider()
 
     # ------------------------
-    # IMPORT ROCKSTAR STATS
-    # ------------------------
-
-    st.markdown("### Import Rockstar Stats")
-
-    html = st.text_area(
-        "Paste Rockstar Stats HTML",
-        height=150,
-        key=f"html{player}"
-    )
-
-    if st.button("Extract", key=f"extract{player}"):
-
-        stats = extract_stats(html)
-
-        if stats:
-
-            for k, v in stats.items():
-
-                if "cash" in k.lower():
-                    update_cash(player, v)
-
-            st.success("Stats Imported")
-
-            df = pd.DataFrame(
-                [{"Stat": k, "Value": v} for k, v in stats.items()]
-            )
-
-            st.table(df)
-
-            st.rerun()
-
-        else:
-            st.error("Parser failed")
-
-    st.divider()
-
-    # ------------------------
     # GOAL TRACKER
     # ------------------------
 
@@ -214,10 +200,8 @@ def dashboard(player):
         key=f"goal_{player}"
     )
 
-    cash = get_cash(player)
-
     remaining = max(goal - cash, 0)
-    progress = min(cash / goal, 1)
+    progress = min(cash / goal, 1) if goal > 0 else 0
 
     col1, col2 = st.columns(2)
 
