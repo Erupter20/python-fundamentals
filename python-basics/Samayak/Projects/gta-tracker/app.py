@@ -16,6 +16,7 @@ from database import (
 from parser import extract_stats
 
 
+# Initialize database
 init_db()
 
 st.set_page_config(
@@ -54,16 +55,28 @@ def dashboard(player):
 
     st.divider()
 
+    # ------------------------
+    # ADD ASSET
+    # ------------------------
+
     st.markdown("### Add Asset")
 
     name = st.text_input("Asset Name", key=f"name{player}")
+
     category = st.selectbox(
         "Category",
         ["Property", "Business", "Vehicle", "Utility"],
         key=f"cat{player}"
     )
+
     sub = st.text_input("Subcategory", key=f"sub{player}")
-    price = st.number_input("Price", step=10000, key=f"price{player}")
+
+    price = st.number_input(
+        "Price",
+        min_value=0,
+        step=10000,
+        key=f"price{player}"
+    )
 
     if st.button("Add Asset", key=f"add{player}"):
 
@@ -72,6 +85,10 @@ def dashboard(player):
             st.rerun()
 
     st.divider()
+
+    # ------------------------
+    # SHOW ASSETS
+    # ------------------------
 
     if assets:
 
@@ -82,7 +99,14 @@ def dashboard(player):
 
         st.table(df)
 
+    else:
+        st.info("No assets yet")
+
     st.divider()
+
+    # ------------------------
+    # ADD UPGRADE
+    # ------------------------
 
     st.markdown("### Add Upgrade")
 
@@ -95,21 +119,30 @@ def dashboard(player):
         )
 
         upgrade = st.text_input(
-            "Upgrade",
+            "Upgrade Name",
             key=f"upgrade{player}"
         )
 
-        price = st.number_input(
+        upgrade_price = st.number_input(
             "Upgrade Price",
+            min_value=0,
+            step=10000,
             key=f"upprice{player}"
         )
 
         if st.button("Add Upgrade", key=f"addUp{player}"):
 
-            add_upgrade(player, prop, upgrade, price)
+            add_upgrade(player, prop, upgrade, upgrade_price)
             st.rerun()
 
+    else:
+        st.info("Add a property first to attach upgrades")
+
     st.divider()
+
+    # ------------------------
+    # IMPORT ROCKSTAR STATS
+    # ------------------------
 
     st.markdown("### Import Rockstar Stats")
 
@@ -119,31 +152,64 @@ def dashboard(player):
         key=f"html{player}"
     )
 
-    
     if st.button("Extract", key=f"extract{player}"):
 
-    stats = extract_stats(html)
+        stats = extract_stats(html)
 
-    if stats:
+        if stats:
 
-        for k, v in stats.items():
+            for k, v in stats.items():
 
-            if "cash" in k.lower():
-                update_cash(player, v)
+                if "cash" in k.lower():
+                    update_cash(player, v)
 
-        st.success("Stats Imported")
+            st.success("Stats Imported")
 
-        df = pd.DataFrame(
-            [{"Stat": k, "Value": v} for k, v in stats.items()]
-        )
+            df = pd.DataFrame(
+                [{"Stat": k, "Value": v} for k, v in stats.items()]
+            )
 
-        st.table(df)
+            st.table(df)
 
-        st.rerun()
+            st.rerun()
 
-    else:
-        st.error("Parser failed")
+        else:
+            st.error("Parser failed")
 
+    st.divider()
+
+    # ------------------------
+    # GOAL TRACKER
+    # ------------------------
+
+    st.markdown("### Goal Tracker")
+
+    goal = st.number_input(
+        "Goal Amount",
+        value=6500000,
+        step=100000,
+        key=f"goal_{player}"
+    )
+
+    cash = get_cash(player)
+
+    remaining = max(goal - cash, 0)
+    progress = min(cash / goal, 1)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric("Current Cash", f"${cash:,}")
+
+    with col2:
+        st.metric("Remaining", f"${remaining:,}")
+
+    st.progress(progress)
+
+
+# ------------------------
+# PLAYER TABS
+# ------------------------
 
 for i, p in enumerate(players):
 
