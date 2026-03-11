@@ -4,6 +4,7 @@ DB_NAME = "gta.db"
 
 
 def connect():
+    print("Using DB:", DB_NAME)
     return sqlite3.connect(DB_NAME, check_same_thread=False)
 
 
