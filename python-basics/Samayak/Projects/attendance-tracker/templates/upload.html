@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Add Timetable</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="manifest" href="/static/manifest.json">
+</head>
+
+<body>
+
+<h1>Add Timetable Entry</h1>
+
+<div class="nav">
+<a href="/">Dashboard</a>
+<a href="/timetable">View Timetable</a>
+</div>
+
+<div class="card">
+
+<h2>Manual Entry</h2>
+
+<form method="post">
+
+<label>Subject</label>
+<input type="text" name="subject" required>
+
+<label>Day</label>
+
+<select name="day">
+<option>Monday</option>
+<option>Tuesday</option>
+<option>Wednesday</option>
+<option>Thursday</option>
+<option>Friday</option>
+</select>
+
+<button type="submit">Add</button>
+
+</form>
+
+</div>
+
+
+<div class="card">
+
+<h2>Upload Timetable (Photo / PDF)</h2>
+
+<form action="/upload-file" method="post" enctype="multipart/form-data">
+
+<input type="file" name="file" accept=".png,.jpg,.jpeg,.pdf, .docx">
+
+<button type="submit">Upload</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>{{subject}} Calendar</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h1>{{subject}} Attendance</h1>
+
+<a href="/">Back</a>
+
+<div id="calendar"></div>
+
+<h2>Attendance History</h2>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Status</th>
+<th>Undo</th>
+</tr>
+
+{% for date,info in logs.items() %}
+
+<tr>
+
+<td>{{date}}</td>
+<td>{{info.status}}</td>
+
+<td>
+<a href="/undo/{{info.id}}">Undo</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+:root{
+
+--bg:#0B132B;
+--panel:#1C2541;
+--panel2:#3A506B;
+
+--accent:#5BC0BE;
+--accent2:#6FFFE9;
+
+--text:#C7D3DD;
+--muted:#8FA5B5;
+
+--danger:#FF6B6B;
+--good:#4CD964;
+
+}
+
+/* base */
+
+body{
+background:var(--bg);
+color:var(--text);
+font-family:system-ui, Arial;
+padding:40px;
+margin:0;
+}
+
+/* headings */
+
+h1{
+margin-bottom:10px;
+}
+
+h2{
+margin-top:40px;
+}
+
+/* navigation */
+
+.nav{
+margin-bottom:20px;
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+/* links */
+
+a{
+color:var(--accent2);
+text-decoration:none;
+}
+
+a:hover{
+color:var(--accent);
+}
+
+/* cards */
+
+.card{
+background:var(--panel);
+padding:25px;
+border-radius:10px;
+margin-top:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* table */
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+overflow:hidden;
+border-radius:8px;
+}
+
+th{
+background:var(--panel2);
+padding:12px;
+text-align:left;
+}
+
+td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+/* zebra rows */
+
+tr:nth-child(even){
+background:rgba(255,255,255,0.02);
+}
+
+tr:hover{
+background:rgba(255,255,255,0.05);
+}
+
+/* subject link */
+
+.subject a{
+font-weight:bold;
+}
+
+/* buttons */
+
+button{
+padding:6px 14px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+background:var(--accent);
+color:#000;
+font-weight:600;
+margin-right:5px;
+}
+
+button:hover{
+background:var(--accent2);
+}
+
+/* inputs */
+
+input, select{
+padding:6px;
+margin-right:10px;
+border-radius:5px;
+border:none;
+background:#3A506B;
+color:white;
+}
+
+form{
+margin-top:15px;
+}
+
+/* attendance status */
+
+.good{
+color:var(--good);
+font-weight:600;
+}
+
+.bad{
+color:var(--danger);
+font-weight:600;
+}
+
+/* progress bar */
+
+.progress{
+background:#1a2747;
+height:8px;
+border-radius:6px;
+overflow:hidden;
+margin-top:5px;
+}
+
+.progress-bar{
+height:100%;
+background:var(--accent);
+}
+
+/* calendar */
+
+#calendar table{
+width:320px;
+margin-top:20px;
+}
+
+#calendar td{
+height:40px;
+text-align:center;
+}
+
+/* ---------------- MOBILE ---------------- */
+
+@media (max-width:768px){
+
+body{
+padding:20px;
+}
+
+h1{
+font-size:24px;
+}
+
+.card{
+padding:18px;
+}
+
+table{
+display:block;
+}
+
+thead{
+display:none;
+}
+
+tr{
+display:block;
+margin-bottom:15px;
+background:var(--panel);
+border-radius:8px;
+padding:10px;
+}
+
+td{
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+border:none;
+}
+
+td::before{
+font-weight:bold;
+color:var(--muted);
+}
+
+/* column labels */
+
+td:nth-child(1)::before{content:"Subject";}
+td:nth-child(2)::before{content:"Attendance";}
+td:nth-child(3)::before{content:"Safe Bunks";}
+td:nth-child(4)::before{content:"Action";}
+
+.progress{
+width:100%;
+}
+
+}

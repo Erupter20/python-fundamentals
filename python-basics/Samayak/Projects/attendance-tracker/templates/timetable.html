@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Timetable</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="manifest" href="/static/manifest.json" />
+  </head>
+
+  <body>
+    <h1>Timetable</h1>
+
+    <table>
+      <tr>
+        <th>Day</th>
+        <th>Subject</th>
+      </tr>
+
+      {% for r in rows %}
+
+      <tr>
+        <td>{{r[1]}}</td>
+        <td>{{r[2]}}</td>
+      </tr>
+
+      {% endfor %}
+    </table>
+
+    <a href="/">Back</a>
+  </body>
+</html>

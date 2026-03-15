@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Attendance Dashboard</title>
+
+<link rel="stylesheet" href="/static/style.css">
+<link rel="manifest" href="/static/manifest.json">
+
+</head>
+
+<body>
+
+<h1>Attendance Dashboard</h1>
+
+<div class="nav">
+
+<a href="/upload">Add Timetable</a>
+<a href="/timetable">View Timetable</a>
+
+</div>
+
+
+<div class="card">
+
+<h2>Subjects</h2>
+
+<table>
+
+<tr>
+<th>Subject</th>
+<th>Attendance</th>
+<th>Safe Bunks</th>
+<th>Mark</th>
+</tr>
+
+{% for s in subjects %}
+
+<tr>
+
+<td class="subject">
+
+<a href="/subject/{{s.name}}">
+{{s.name}}
+</a>
+
+</td>
+
+
+<td>
+
+{{s.attended}} / {{s.total}}
+
+<div class="progress">
+
+<div class="progress-bar" style="width:{{s.percent}}%"></div>
+
+</div>
+
+{% if s.percent >= 75 %}
+<span class="good">{{s.percent}}%</span>
+{% else %}
+<span class="bad">{{s.percent}}%</span>
+{% endif %}
+
+</td>
+
+
+<td>
+
+{{s.bunks}}
+
+</td>
+
+
+<td>
+
+<form action="/mark" method="post">
+
+<input type="hidden" name="subject" value="{{s.name}}">
+
+<select name="status" required>
+
+<option value="">Select</option>
+<option value="present">Present</option>
+<option value="absent">Absent</option>
+
+</select>
+
+<button type="submit">Save</button>
+
+</form>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+<div class="card">
+
+<h2>Recent Entries</h2>
+
+<table>
+
+<tr>
+<th>Date</th>
+<th>Subject</th>
+<th>Status</th>
+<th>Undo</th>
+</tr>
+
+{% for l in logs %}
+
+<tr>
+
+<td>{{l[3]}}</td>
+
+<td>{{l[1]}}</td>
+
+<td>
+
+{% if l[2] == "present" %}
+<span class="good">Present</span>
+{% else %}
+<span class="bad">Absent</span>
+{% endif %}
+
+</td>
+
+<td>
+
+<a href="/undo/{{l[0]}}">Undo</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+
+</html>
