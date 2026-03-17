@@ -1,7 +1,7 @@
 Flask
 python-docx
 pytesseract
-pillow
+Pillow
 pdf2image
 opencv-python-headless
 numpy
