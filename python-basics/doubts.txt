@@ -21,3 +21,9 @@ Modules - 04, leading 0 gives an error
 OOPS - 02,03, 05, 06
 
 whats .venv, __pycache_? 
+
+
+-----PANDAS-----
+DataFrame - 06
+Data I/O - 02(why index?), 03, 05
+Data Cleaning - 01
